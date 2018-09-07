@@ -84,7 +84,7 @@ server.post("/projects/:id", (req, res, next) => {
     projects.insert(id)
         .then(project => {
             if(project) {
-                res.status(200).json({ project });
+                res.status(201).json({ project });
             }else {
                 res.status(400).json({message: "Error couldn't provide post content"});
             }
@@ -118,6 +118,57 @@ server.put("/actions/:id", (req, res) => {
   res.status(400).json({ message: "Please provide text" });
   }
 });
+
+
+server.put("/projects/:id", (req, res) => {
+  const description = req.body.description;
+  const id = req.params.id
+  if(description) {
+    actions.update(id, req.body)
+    .then(actions => {
+      if (actions) {
+        res.status(200).json({ actions });
+      }else {
+        res.status(404).json({message: "ID doesn't exist to update"});
+      }
+    })
+    .catch(err => {
+      console.log("error", err);
+      res.status(500).json({
+        message: "Error getting the information for each character"
+      });
+    });
+} else {
+  res.status(400).json({ message: "Please provide text" });
+  }
+});
+
+
+server.delete("/actions/:id", (req, res) => {
+  const id = req.params.id
+  const completed = true
+  if (id, completed) {
+    actions.remove(id)
+      .then(actions => {
+        if (actions) {
+          res.status(204).json({
+            url: `/actions/${id}`,
+            operation: `DELETE for actions with id ${id}`
+          });
+        }else {
+          res.status(404).json({message: "unable to delete action with inputted id"});
+        }
+      })
+      .catch(err => {
+        console.log("error", err);
+        res.status(500).json({
+          message: "Error performing the Delete function"
+        });
+      });
+  } else {
+    res.status(400).json({ message: "Please provide ID" });
+  }
+})
 
 
 
