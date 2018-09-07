@@ -97,22 +97,21 @@ server.post("/actions/:id", (req, res, next) => {
 });
 
 //Post for PROJECTS
-server.post("/projects/:id", (req, res, next) => {
-    const id = req.params.id;
+server.post("/projects", (req, res) => {
     const project = req.body;
 
-
-    projects.getProjectActions(id)
-        .then(projects => {
-            if(projects) {
-                res.status(201).json({ projects });
+    projects.insert(project)
+        .then(project => {
+          if(project) {
+            console.log(project);  
+              res.status(201).json({ project });
             }else {
                 res.status(400).json({message: "Error couldn't provide post content"});
             }
         })
         .catch(err => {
             console.log("error", err);
-            res.status(500).json({ messgae: "Error getting the information to post" });
+            res.status(500).json({ message: "Error getting the information to post", err });
           });
 });
 
