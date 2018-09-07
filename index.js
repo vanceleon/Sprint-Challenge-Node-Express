@@ -5,7 +5,7 @@ const projects = require("./data/helpers/projectModel");
 
 server.use(express.json());
 
-//all actions
+//GET all actions
 server.get("/actions", (req, res) => {
   actions
     .get()
@@ -22,7 +22,7 @@ server.get("/actions", (req, res) => {
     });
 });
 
-//by id
+//GET by id ACTIONS
 server.get("/actions/:id", (req, res) => {
   const id = req.params.id;
     actions.get(id)
@@ -42,7 +42,7 @@ server.get("/actions/:id", (req, res) => {
 
 
 
-//all projects
+//GET all PROJECTS
 server.get("/projects", (req, res) => {
   projects.get().then(projects => {
       if(projects) {
@@ -58,7 +58,7 @@ server.get("/projects", (req, res) => {
   
 });
 
-//by id
+//GET by id PROJECTS
 server.get("/projects/:id", (req, res) => {
   const id = req.params.id;
     projects.get(id)
@@ -76,34 +76,36 @@ server.get("/projects/:id", (req, res) => {
   
 });
 
-//Post for actions
+//Post for ACTIONS
 server.post("/actions/:id", (req, res, next) => {
-  const id = nextId++;
+  const id = req.params.id;
   const action = req.body;
 
-  projects.insert(id)
+  projects.insert(id, action)
       .then(action => {
-          if(action) {
-              res.status(201).json({ action });
+          if(newAction) {
+            action.push(newAction);  
+            res.status(201).json({ action });
           }else {
               res.status(400).json({message: "Error couldn't provide post content"});
           }
       })
       .catch(err => {
           console.log("error", err);
-          res.status(500).json({ messgae: "Error getting the information to post" });
+          res.status(500).json({ message: "Error getting the information to post" });
         });
 });
 
-//Post for Projects
+//Post for PROJECTS
 server.post("/projects/:id", (req, res, next) => {
     const id = req.params.id;
     const project = req.body;
 
-    projects.insert(id)
-        .then(project => {
-            if(project) {
-                res.status(201).json({ project });
+
+    projects.getProjectActions(id)
+        .then(projects => {
+            if(projects) {
+                res.status(201).json({ projects });
             }else {
                 res.status(400).json({message: "Error couldn't provide post content"});
             }
@@ -115,6 +117,7 @@ server.post("/projects/:id", (req, res, next) => {
 });
 
 
+//PUT for ACTIONS
 server.put("/actions/:id", (req, res) => {
   const description = req.body.description;
   const id = req.params.id
@@ -139,6 +142,8 @@ server.put("/actions/:id", (req, res) => {
 });
 
 
+
+//PUT for PROJECTS
 server.put("/projects/:id", (req, res) => {
   const id = req.params.id;
   const changes = req.body;
@@ -164,6 +169,37 @@ server.put("/projects/:id", (req, res) => {
 });
 
 
+
+//DELETE for ACTIONS
+server.delete("/actions/:id", (req, res) => {
+  const id = req.params.id
+  const completed = true
+  if (id, completed) {
+    actions.remove(id)
+      .then(actions => {
+        if (actions) {
+          res.status(204).json({
+            url: `/actions/${id}`,
+            operation: `DELETE for actions with id ${id}`
+          });
+        }else {
+          res.status(404).json({message: "unable to delete action with inputted id"});
+        }
+      })
+      .catch(err => {
+        console.log("error", err);
+        res.status(500).json({
+          message: "Error performing the Delete function"
+        });
+      });
+  } else {
+    res.status(400).json({ message: "Please provide ID" });
+  }
+})
+
+
+
+//DELETE for PROJECTS
 server.delete("/actions/:id", (req, res) => {
   const id = req.params.id
   const completed = true
