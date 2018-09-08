@@ -41,7 +41,6 @@ server.get("/actions/:id", (req, res) => {
 
 
 
-
 //GET all PROJECTS
 server.get("/projects", (req, res) => {
   projects.get().then(projects => {
@@ -199,15 +198,15 @@ server.delete("/actions/:id", (req, res) => {
 
 
 //DELETE for PROJECTS
-server.delete("/actions/:id", (req, res) => {
+server.delete("/projects/:id", (req, res) => {
   const id = req.params.id
   const completed = true
   if (id, completed) {
-    actions.remove(id)
-      .then(actions => {
-        if (actions) {
+    projects.remove(id)
+      .then(projects => {
+        if (projects) {
           res.status(204).json({
-            url: `/actions/${id}`,
+            url: `/projects/${id}`,
             operation: `DELETE for actions with id ${id}`
           });
         }else {
