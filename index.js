@@ -76,14 +76,12 @@ server.get("/projects/:id", (req, res) => {
 });
 
 //Post for ACTIONS
-server.post("/actions/:id", (req, res, next) => {
-  const id = req.params.id;
+server.post("/actions", (req, res) => {
   const action = req.body;
 
-  projects.insert(id, action)
+  actions.insert(action)
       .then(action => {
-          if(newAction) {
-            action.push(newAction);  
+          if(action) {
             res.status(201).json({ action });
           }else {
               res.status(400).json({message: "Error couldn't provide post content"});
